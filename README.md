@@ -5,4 +5,4 @@
 |名称|分支|描述|
 |:---|:--:|---:|
 |overload| overload-js | 在JavaScript中使用函数的重载 |
-|RingProgressBar| ring-progress | 可交互环形进度条 |
+|ProgressRing| progress-ring | 可交互环形进度条 |
