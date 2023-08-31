@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>环形进度条</title>
+    <link rel="stylesheet" href="./RingProgressBar.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .box {
+            margin: 50px;
+            padding: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-bg {
+            stroke: gainsboro;
+            filter: blur(.5px);
+        }
+
+        .loading-ld {
+            stroke: tomato;
+            filter: blur(3px);
+        }
+
+        .loading-play-btn {
+            opacity: .6px;
+            filter: blur(.5px);
+            fill: orange;
+        }
+    </style>
+
+    <script type="module">
+        import RingProgressBar from './RingProgressBar.js';
+
+        globalThis.onload = () => {
+            let ring = new RingProgressBar(document.querySelector('.loading'), 80, 8);
+        }
+    </script>
+</head>
+
+<body>
+    <div class="box">
+        <!-- 拷贝使用，需要自己修改svg样式，class名称不能修改 -->
+        <svg id="ring-progress-1" class="loading" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <!-- 背景环 -->
+            <circle class="loading-bg" cx="50%" cy="50%" />
+            <!-- 前景环 -->
+            <circle class="loading-ld" cx="50%" cy="50%" />
+            <!-- 小按钮 -->
+            <circle class="loading-play-btn" />
+        </svg>
+    </div>
+</body>
+
+</html>
