@@ -4,4 +4,4 @@
 # 概要
 |名称|分支|描述|
 |:---|:--:|---:|
-|overolad| overload-js | 在JavaScript中使用函数的重载 |
+|overload| overload-js | 在JavaScript中使用函数的重载 |
