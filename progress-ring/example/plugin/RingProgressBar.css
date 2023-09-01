@@ -1,0 +1,30 @@
+.loading{
+    position: relative;
+    overflow: visible;
+    overflow: hidden;
+    transform: rotateZ(-90deg);
+}
+
+.loading .loading-ld{
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.loading :is(.loading-ld , .loading-bg){
+    filter: blur(1px);
+}
+
+.loading .loading-play-btn{
+    position: absolute;
+    z-index: 0;
+    opacity: .7;
+}
+
+.loading .loading-play-btn:hover{
+    position: absolute;
+    z-index: 1;
+    border-radius: 50%;
+    outline: 1px solid gainsboro;
+    opacity: 1;
+    cursor: pointer;
+}
