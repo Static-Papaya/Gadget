@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./plugin/RingProgressBar.css">
+    <script type="module" src="./main.js"></script>
+    <title>音乐播放器-示波器</title>
+</head>
+<body>
+    <div class="music-root">
+        <div class="bg-color"></div>
+        <div class="spectrum"></div>
+        <div class="panel">
+            <div class="progressbar">
+                <svg id="ring-progress-1" class="loading" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="loading-bg" cx="50%" cy="50%" stroke="tomato" fill="transparent"/>
+                    <circle class="loading-ld" cx="50%" cy="50%" stroke="pink" fill="transparent"/>
+                    <circle class="loading-play-btn" fill="rgb(255, 234, 234)"/>
+                </svg>
+            </div>
+            <img class="panel-btn-main" src="./svg/play.svg">
+            <span class="panel-btn-title">歌曲名：Champions</span>
+            <span class="panel-btn-author">作者：Elektronomia</span>
+        </div>
+    </div>
+</body>
+</html>
