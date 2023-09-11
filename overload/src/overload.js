@@ -2,45 +2,156 @@
  * @file Overload in JavaScript
  * @author Static-Papaya
  * @link https://github.com/Static-Papaya
+ * @version 0.2.1
  */
 
 const $RESULT_MAP_INDEX = Symbol('index');
 const $RESULT_MAP_DEFAULT = Symbol('default');
+const $RESULT_MAP_MAX_LENGTH = Symbol('max-args-length');
 const $UNDEFINED = void 0;
 
-class AutoLengthType extends String { }
+/**
+ * 获取全局对象
+ * @returns {globalThis}
+ */
+function global() {
+    if (typeof window !== 'undefined') {
+        return window;
+    }
+    else if (typeof global !== 'undefined') {
+        return global;
+    }
+    else if (typeof self !== 'undefined') {
+        return self;
+    }
+    else {
+        return {};
+    }
+}
+
+const _ObjectResultMap = global().WeakMap || class {
+    /** 
+     * 链表子节点
+     * @private
+     * @typedef {Object} _ObjectResultMapNode
+     * @property {_ObjectResultMapNode} _next 链表下一个节点
+     * @property {any} instanceKey 相当于WeakMap的key
+     * @property {any} value 相当于WeakMap的value
+    */
+
+    /** @private @type {_ObjectResultMapNode} */
+    _next = $UNDEFINED;
+    /** @private @type {_ObjectResultMapNode} */
+    _last = this;
+
+    /**
+     * 写入
+     * @property {any} instanceKey 相当于WeakMap的key
+     * @property {any} value 相当于WeakMap的value
+     */
+    set(instanceKey, value) {
+        let target = this[instanceKey];
+
+        if (target === $UNDEFINED) {
+            this._last = this._last._next = { instanceKey, value, _next: $UNDEFINED };
+        } else {
+            target.value = value;
+        }
+    }
+
+    /**
+     * 获取
+     * @property {any} instanceKey 相当于WeakMap的key
+     * @returns {_ObjectResultMapNode}
+     */
+    get(instanceKey) {
+        let target = this._next;
+
+        while (target !== $UNDEFINED) {
+            if (target.instanceKey === instanceKey) break;
+            target = target._next;
+        }
+
+        return target && target.value;
+    }
+
+    /**
+     * 是否含有该key
+     * @property {any} instanceKey 相当于WeakMap的key
+     * @returns {boolean}
+     */
+    has(instanceKey) {
+        return !!this.get(instanceKey);
+    }
+
+    /**
+     * 冻结
+     */
+    freeze() {
+        let node = this._next;
+        while (node) {
+            Object.freeze(node);
+            node = node._next;
+        }
+    }
+};
+
+/**
+ * 用于标识可变参数
+ */
+class AutoLengthType {
+    constructor(type) {
+        this.type = 'adjust';
+        this.typeList = type;
+    }
+}
 
 /**
  * 字段映射表
  * @constructor
  * @param {string} [defaultKey='_'] 默认的键名
+ * @returns {WeakMap}
  */
-function ResultMap(defaultKey = '_') {
-    /** @type {number} */
-    this[$RESULT_MAP_INDEX] = 0;
+const ResultMap = function (defaultKey = '_') {
+    /** @type {WeakMap} 对象映射存储器 */
+    const map = new _ObjectResultMap();
+
+    /** @type {number} 更新下标 */
+    map[$RESULT_MAP_INDEX] = 0;
     /** @type {any} 默认的键名 */
-    this[$RESULT_MAP_DEFAULT] = defaultKey;
+    map[$RESULT_MAP_DEFAULT] = defaultKey;
     /** @type {number} 输入参数最长的长度 */
-    this.maxArgsLength = 0;
+    map[$RESULT_MAP_MAX_LENGTH] = 0;
+
+    return map;
 }
 
 /**
  * 向ResultMap中添加映射.
- * @param {ResultMap} map 映射对象 
+ * @param {ResultMap} map 类型字段映射表 
  * @param {string} key 键名
  * @return {number} 映射值
  */
 function setMap(map, key) {
-    let index = map[key];
+    let index = map[key] || map.get(key);
 
-    if (index !== $UNDEFINED) return index;
-
-    return map[key] = map[$RESULT_MAP_INDEX]++;
+    // 已经存在
+    if (index !== $UNDEFINED) {
+        return index;
+    }
+    // 基本类型
+    else if (typeof key === 'string') {
+        return map[key] = map[$RESULT_MAP_INDEX]++;
+    }
+    // 对象
+    else {
+        return map.set(key, map[$RESULT_MAP_INDEX]++);
+    }
 };
 
 /**
  * 计算匹配映射结果
- * @param {ResultMap} map 字段映射表
+ * @param {ResultMap} map 类型字段映射表
  * @param  {string} startChar 开始标识
  * @param  {Array} paramsType 参数类型表
  * @returns {string} 映射值
@@ -52,7 +163,7 @@ function calculateResult(map, startChar, paramsType) {
 
     while (index++ <= max) {
         if (type !== preType) {
-            keys.push(`${map[preType]}I${times}`);
+            keys.push(`${map[preType] || map.get(preType)}I${times}`);
             preType = type;
             times = 0;
         }
@@ -65,7 +176,7 @@ function calculateResult(map, startChar, paramsType) {
 
 /**
  * 计算通项映射结果
- * @param {ResultMap} map 字段映射表
+ * @param {ResultMap} map 类型字段映射表
  * @param  {string} startChar 开始标识
  * @param  {Array} paramsType 参数类型表
  * @returns {string} 映射值
@@ -78,7 +189,7 @@ function calculateResultAuto(map, startChar, paramsType) {
         type = paramsType.pop();
 
         if (type === preType) continue;
-        key.push(map[type]);
+        key.push(map[type] || map.get(type));
         preType = type;
     }
 
@@ -97,22 +208,22 @@ function formatResultToAuto(mapping) {
 /**
  * 在重载定义阶段时获取输入的类型.
  * @param {any} type 定义阶段输入的类型
- * @returns {string} 类型同一化
+ * @returns {string | any} 类型同一化
  */
 function getTypeOnDefine(type) {
     let resultType = typeof type;
 
-    return resultType === 'string' ? type : (type && type.name) || resultType;
+    return resultType === 'string' ? type : type || resultType;
 }
 
 /**
  * 设置一个通项重载函数
- * @param {Object} list 字段映射表
+ * @param {Object} list 匹配参数列表
  * @param {Object} templateList 通项字段映射表
- * @param {ResultMap} typesMap 匹配参数列表
+ * @param {ResultMap} map 类型字段映射表
  * @param {Array} options 重载配置项
  */
-function setOverloadOnDefine(list, templateList, typesMap, options) {
+function setOverloadOnDefine(list, templateList, map, options) {
     const loaderFunction = options.pop();
     let definedType = 1, types;
 
@@ -121,26 +232,26 @@ function setOverloadOnDefine(list, templateList, typesMap, options) {
 
         if (type instanceof AutoLengthType === false) {
             resultType = getTypeOnDefine(type);
-        } 
+        }
         else {
             definedType = 0;
-            resultType = type.valueOf();
+            resultType = type.typeList;
         }
         // 写入到映射表
-        setMap(typesMap, resultType);
+        setMap(map, resultType);
         return resultType;
     });
 
     if (definedType) {
-        list[calculateResult(typesMap, '_', types)] = loaderFunction;
+        list[calculateResult(map, '_', types)] = loaderFunction;
 
         // 比较参数最长的长度
-        if (typesMap.maxArgsLength < options.length) {
-            typesMap.maxArgsLength = options.length;
+        if (map[$RESULT_MAP_MAX_LENGTH] < options.length) {
+            map[$RESULT_MAP_MAX_LENGTH] = options.length;
         }
     }
     else {
-        templateList[calculateResultAuto(typesMap, '_', types)] = loaderFunction;
+        templateList[calculateResultAuto(map, '_', types)] = loaderFunction;
     }
 }
 
@@ -200,24 +311,24 @@ function overload(...options) {
 
         /* 如果重载配置输入为空则表示配置完成 */
         /* 关闭对象 */
-        Object.freeze(typesMap);
+        Object.freeze(typesMap)
+        typesMap.freeze instanceof Function && typesMap.freeze();
         Object.freeze(argumentsList);
         Object.freeze(templateList);
 
         /* 返回适配函数 */
         return function (...args) {
             const paramTypes = [];
+            let type, select;
 
             for (const param of arguments) {
+                type = typeof param;
                 paramTypes.push(
-                    param instanceof Object === true ?
-                        param.constructor.name || 'object' : typeof param
+                    type !== 'object' ? type : param && param.constructor || type
                 );
             }
 
-            let select;
-            
-            if (args.length <= typesMap.maxArgsLength) {
+            if (args.length <= typesMap[$RESULT_MAP_MAX_LENGTH]) {
                 /** @type {string} 计算匹配映射 */
                 let key = calculateResult(typesMap, '_', paramTypes);
                 /* 选择适合的重载函数 */
