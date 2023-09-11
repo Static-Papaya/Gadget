@@ -31,4 +31,4 @@
 4.如果要修改样式则可以参考index.html中的style以及RingProgressBar.css文件进行修改。
 
 # 示例项目
-和前面一样，vsCode使用Live Server运行index.html即可查看效果。该项目为一个带有示波器的音乐播放器，主要使用WebAudio实现，如果要更换音频，可以修改main.js中的`musicPlayer.loadMusic('./champions.mp3');`中的地址。
+和前面一样，vsCode使用Live Server运行index.html即可查看效果。该项目为一个带有示波器的音乐播放器，主要使用WebAudio实现，使用时需要修改main.js中的`musicPlayer.loadMusic('./xxx.mp3');`中的地址，可以更换为网络地址。
