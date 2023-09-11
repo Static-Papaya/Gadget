@@ -2,9 +2,8 @@ import RingProgressBar from './plugin/RingProgressBar.js'
 
 globalThis.onload = () => {
     let musicPlayer = new MusicPlayer(document.querySelector('.music-root'));
-    // 注：该示例所含音频仅为测试所用。
-    // 歌曲名：Champions, 作者：Elektronomia.
-    musicPlayer.loadMusic('./champions.mp3');
+    // 修改这里
+    musicPlayer.loadMusic('./xxx.mp3');
 }
 
 /* 播放器类 */
