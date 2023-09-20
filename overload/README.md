@@ -2,12 +2,6 @@
 ### Version 0.2.2
 ---  
 
-<style>
-    .attention{
-        color: orange;
-    }
-</style>
-
 ## 更新  
 1. 废弃 自定义对象类型时通过对象构造器名称来指定重载。[详情](#t_1)
 2. 更改 类型'Function' 更改为 'function'; undefined 移除'undefined'; Array 移除 'Array'.
@@ -41,7 +35,7 @@
 ```  
 
 &emsp;&emsp;如果我们在指定参数类型时需要用到自定义对象，您可以像下面这样进行定义。  
-<h5 class="attention" id="t_1">
+<h5 id="t_1">
 注：在以往的版本中，您可以通过传入对象名来定义重载参数，但由于这种方式存在很多不确定性，面对不同模块中同名的构造器时就会产生歧义，因此目前已不再支持这种方式定义参数。
 </h5>
 
@@ -80,7 +74,7 @@
     add(5, 6, 7); // 18
 
     const sub = overload(autoLength('string'), autoLength('number'), function(...values) {
-            return values.reduce((total, v) => total - v, 0);
+        return values.reduce((total, v) => total - v, 0);
     })();
 
     sub('1', '2', 3, 4); // -10
