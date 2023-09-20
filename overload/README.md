@@ -1,5 +1,5 @@
 # 在JavaScript中使用重载   
-### Version 0.2.1
+### Version 0.2.2
 ---  
 
 <style>
