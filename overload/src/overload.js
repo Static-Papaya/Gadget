@@ -2,12 +2,19 @@
  * @file Overload in JavaScript
  * @author Static-Papaya
  * @link https://github.com/Static-Papaya
- * @version 0.2.1
+ * @version 0.2.2
+ * @license MIT
  */
 
+/*
+ * 全局字面量
+ */
+/** ResultMap 最新下标 */
 const $RESULT_MAP_INDEX = Symbol('index');
 const $RESULT_MAP_DEFAULT = Symbol('default');
+/** ResultMap 长度 */
 const $RESULT_MAP_MAX_LENGTH = Symbol('max-args-length');
+/** undefined */
 const $UNDEFINED = void 0;
 
 /**
@@ -117,7 +124,7 @@ const ResultMap = function (defaultKey = '_') {
     const map = new _ObjectResultMap();
 
     /** @type {number} 更新下标 */
-    map[$RESULT_MAP_INDEX] = 0;
+    map[$RESULT_MAP_INDEX] = 1;
     /** @type {any} 默认的键名 */
     map[$RESULT_MAP_DEFAULT] = defaultKey;
     /** @type {number} 输入参数最长的长度 */
@@ -357,6 +364,6 @@ function overload(...options) {
 }
 
 export {
-    autoLength,
-    overload
-};
+    overload,
+    autoLength
+}
