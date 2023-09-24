@@ -2,7 +2,7 @@
 ### Version 0.3.0
 ---  
 
-#### 2023.9.23 0.3.0 更新 
+#### 2023.9.24 0.3.0 更新 
 1. 新增`typeNone`钩子。[详情](#type_none_add)  
 2. `autoLength`钩子支持一次性定义多个类型。[详情](#auto_length_update)  
 3. 修复了jsdoc部分错误。  
